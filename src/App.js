@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState,Component } from 'react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      show: []
+    };
+  }
+  
+  async componentDidMount() {
+    fetch('https://api.publicapis.org/categories')
+      .then(response => response.json())
+      .then(data => this.setState({ data:data,show:data }))
+
+    document.getElementById('in').addEventListener("keyup", event => {
+      let val = document.getElementById('in').value;
+      console.log(val)
+      if(val == ''){
+        this.setState({
+          show: this.state.data
+        }) 
+      }else{
+        this.setState({
+          show: this.state.data.filter(word => word.startsWith(val))
+        }) 
+      }
+      
+      // console.log(this.state.data.filter(word => word.startsWith(val)))
+    });
+  }
+  render() {
+    const { show } = this.state;
+    return (
+      <div>
+        <input type="text" id="in" />
+        <ul>
+          {show.map(show =>
+            <li key={show}>
+              {show}
+            </li>
+          )}
+        </ul>
+      </div>
+    )
+  }
 }
-
-export default App;
